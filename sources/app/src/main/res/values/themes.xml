@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Haupt-Theme für den OUYA Launcher -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <!-- Hintergrundfarbe beim Start (verhindert grauen Flash) -->
+        <item name="android:windowBackground">#101010</item>
+
+        <!-- Keine ActionBar, kein Titel -->
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+
+        <!-- Systemleisten dunkel -->
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:navigationBarColor">#000000</item>
+
+        <!-- Standard-Schrift hell -->
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorSecondary">#DDDDDD</item>
+
+        <!-- OUYA-Farben -->
+        <item name="colorPrimary">#FF2B00</item>  <!-- Leuchtendes OUYA-Orange -->
+        <item name="colorPrimaryDark">#CC2200</item>
+        <item name="colorAccent">#FF2B00</item>
+
+        <!-- Blauen TV-Fokus deaktivieren -->
+        <item name="android:defaultFocusHighlightEnabled">false</item>
+
+        <!-- Optional: Schriftarten-Feeling -->
+        <item name="android:fontFamily">sans-serif-medium</item>
+
+        <!-- Optionale Übergangs-Optik -->
+        <item name="android:windowAnimationStyle">@style/FadeInAnimation</item>
+    </style>
+
+    <!-- Sanfter Fade-In für Aktivitätswechsel -->
+    <style name="FadeInAnimation">
+        <item name="android:activityOpenEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:activityCloseExitAnimation">@android:anim/fade_out</item>
+    </style>
+
+</resources>

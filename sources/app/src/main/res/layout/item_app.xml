@@ -1,0 +1,36 @@
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/tile_width_px"
+    android:layout_height="@dimen/tile_height_px"
+    android:focusable="true"
+    android:clickable="true"
+	android:focusableInTouchMode="true"
+	android:defaultFocusHighlightEnabled="false"
+	android:foreground="@null"
+    android:background="@android:color/transparent">
+
+    <ImageView
+        android:id="@+id/img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/app_name"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height_px"
+        android:layout_gravity="bottom"
+        android:background="@color/black50"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:singleLine="true"
+            android:ellipsize="end"/>
+    </LinearLayout>
+
+</FrameLayout>
