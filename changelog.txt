@@ -1,0 +1,25 @@
+Changelog
+OUYAlaunch
+
+1.0 - October 26, 2025
+First fully functional, fast version
+Background image with button explanations in the bottom left corner
+Focus on apps with slight zoom +0.05%
+Favorites + Genres
+O = App launch
+U = Move app to next genre
+Y = Remove app from launcher (press for 2 seconds)
+A = Set to favorites
+L1/R1 = Navigate in tabs
+L2/R2 = Press simultaneously to reload apps and sort them from A-Z (genres are retained)
+
+1.1 - October 27, 2025
+Focus is no longer lost when scrolling quickly in the launcher
+Sorting from A-Z across all tabs, including favorites
+New OUYAlaunch logo
+Fade-in on app launch
+App focus corrected
+
+1.2 - October 28, 2025
+Focus now in orange, OUYA-style #FF2B00
+Minor bug fixes
