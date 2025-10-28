@@ -22,4 +22,5 @@ App focus corrected
 
 1.2 - October 28, 2025
 Focus now in orange, OUYA-style #FF2B00
+Optimized Caching for better Scrolling in GridView
 Minor bug fixes

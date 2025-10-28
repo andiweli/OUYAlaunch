@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.util.LruCache;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +22,8 @@ import java.util.List;
 public class AppAdapter extends RecyclerView.Adapter<AppAdapter.VH> {
 
     private int selectedPosition = RecyclerView.NO_POSITION;
+
+    private LruCache<String, Bitmap> iconCache;
 
     public interface OnAppClickListener {
         void onAppLaunch(AppEntry entry);
@@ -36,6 +39,11 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.VH> {
         this.ctx = ctx;
         this.data = d;
         this.listener = listener;
+
+        // LruCache für App-Icons
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int cacheSize = maxMemory / 8;
+        iconCache = new LruCache<>(cacheSize);
     }
 
     public void setData(List<AppEntry> d) {
@@ -63,6 +71,12 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.VH> {
             File f = new File(e.iconPath);
             if (f.exists()) {
                 Bitmap bm = BitmapFactory.decodeFile(f.getAbsolutePath());
+                if (bm == null) {
+                    bm = BitmapFactory.decodeFile(f.getAbsolutePath());
+                    if (bm != null) {
+                        iconCache.put(f.getAbsolutePath(), bm);
+                    }
+                }
                 if (bm != null) h.img.setImageBitmap(bm);
             }
         }
