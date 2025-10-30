@@ -5,7 +5,7 @@ Lightweight and fast launcher for the OUYA Android micro-gaming-console.
 
 ## Description
 
-**OUYAlaunch** is my first attempt in developing for Android - to be specific Android 4.1.2.<br/>
+**OUYAlaunch** is my attempt in developing an Android Launcher for the OUYA Console<br/>
 It is focused on a clean UI, OUYA colors, fast and lightweight.
 The UI was primary designed in Photoshop with some handdrawn button graphics and logos.
 
