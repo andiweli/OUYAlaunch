@@ -1,7 +1,7 @@
 # OUYAlaunch
 Lightweight and fast launcher for the OUYA Android micro-gaming-console.
 
-<img width="1633" height="916" alt="image" src="https://github.com/user-attachments/assets/436c695c-9648-4ca2-bdb6-d693da24cf1f" />
+<img width="100%" alt="image" src="https://github.com/user-attachments/assets/ffa3af32-f796-4e6e-acfc-8233935abb7f" />
 
 ## Description
 
@@ -13,7 +13,9 @@ The UI was primary designed in Photoshop with some handdrawn button graphics and
 
 At the first launch OUYAlaunch scans ALL installed apps for an ``ouya_icon.png`` file somewhere in ``res/`` and caches them for fast loading.
 
-Per default ALL scanned apps are initially stored in the tab "Casual".
+<img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/c7af91ad-d01c-4ac7-b2c8-02adfbe67a5d" />
+
+As per default ALL scanned apps are initially stored in the tab "Casual".
 
 ### Now for the available options
 OUYAlaunch has no specific "Settings" or "Options" menu.<br/>
