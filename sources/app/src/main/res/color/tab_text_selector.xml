@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Aktiv/ausgewählt = schwarz 50% transparent -->
-    <item android:state_selected="true" android:color="#80000000"/>
+    <!-- Aktiv/ausgewählt = OUYA Orange 80% transparent -->
+    <item android:state_selected="true" android:color="#80FC2900"/>
     <!-- Fokussiert = gleiche Farbe -->
-    <item android:state_focused="true" android:color="#80000000"/>
-    <!-- Standard = weiß -->
+    <item android:state_focused="true" android:color="#80FC2900
+"/>
+    <!-- Schriftfarbe = weiß -->
     <item android:color="#FFFFFF"/>
 </selector>

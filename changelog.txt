@@ -15,12 +15,20 @@ L2/R2 = Press simultaneously to reload apps and sort them from A-Z (genres are r
 
 1.1 - October 27, 2025
 Focus is no longer lost when scrolling quickly in the launcher
-Sorting from A-Z across all tabs, including favorites
+Sort A-Z across all tabs, including favorites
 New OUYAlaunch logo
-Fade-in on app launch
+Fade-in on app start
 App focus corrected
 
 1.2 - October 28, 2025
-Focus now in orange, OUYA-style #FF2B00
-Optimized Caching for better Scrolling in GridView
+Focus now in OUYA-style orange #FF2B00
+Improved caching of graphics in the GridView
 Minor bug fixes
+
+1.2.1
+Tab focus in OUYA orange instead of black-transparent
+
+1.3
+GridView vertically aligned
+Focus now scales correctly when selected (previously, the image shrank after selection)
+Layout improved

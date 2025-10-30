@@ -1,9 +1,8 @@
-
 <resources>
-    <dimen name="header_height_px">150px</dimen>
-    <dimen name="grid_spacing_px">60px</dimen>
-    <dimen name="tile_width_px">440px</dimen>
-    <dimen name="tile_height_px">248px</dimen>
-    <dimen name="title_bar_height_px">50px</dimen>
+    <dimen name="header_height_px">150px</dimen> <!-- Headergröße -->
+    <dimen name="title_bar_height_px">50px</dimen> <!-- Höhe Tabs -->
     <dimen name="tab_right_padding">40dp</dimen>
+    <dimen name="grid_spacing_px">58px</dimen> <!-- vertikaler Abstand im Grid -->
+    <dimen name="tile_width_px">440px</dimen> <!-- Kachelbreite -->
+    <dimen name="tile_height_px">248px</dimen> <!-- Kachelhöhe -->
 </resources>

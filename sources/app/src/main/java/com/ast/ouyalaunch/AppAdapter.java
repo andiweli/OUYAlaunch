@@ -83,14 +83,19 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.VH> {
 
         // Hover/Fokus-Effekt
         h.itemView.setOnFocusChangeListener((v, hasFocus) -> {
+            v.animate().cancel();
             if (hasFocus) {
                 selectedPosition = h.getAdapterPosition();
                 v.setBackgroundResource(R.drawable.app_hover_bg);
-                v.animate().scaleX(1.08f).scaleY(1.08f).setDuration(100).start();
+                // Auf Standardgröße resetten
+                v.setScaleX(1.05f);
+                v.setScaleY(1.05f);
+                // Skalierung animieren
+                v.animate().scaleX(1.1f).scaleY(1.1f).setDuration(120).start();
                 Log.i("AppAdapter", "Fokus auf: " + e.title);
             } else {
                 v.setBackgroundResource(0);
-                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start();
+                v.animate().scaleX(1.055f).scaleY(1.055f).setDuration(150).start();
             }
         });
 

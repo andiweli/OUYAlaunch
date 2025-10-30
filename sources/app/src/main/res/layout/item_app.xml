@@ -20,15 +20,15 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_bar_height_px"
         android:layout_gravity="bottom"
-        android:background="@color/black50"
+        android:background="@color/tab_background"
         android:gravity="center_vertical">
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
+            android:paddingLeft="8dp"
             android:textColor="@color/white"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:singleLine="true"
             android:ellipsize="end"/>
     </LinearLayout>

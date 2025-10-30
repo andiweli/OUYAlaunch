@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black50">#CC000000</color>
-    <color name="black80">#CC000000</color>
-    <color name="gray_selected">#66000000</color>
-    <color name="white">#FFFFFF</color>
+    <color name="tab_background">#AA000000</color> <!-- Tab-Bar und Tile Hintergrundfarbe -->
+    <color name="gray_selected">#80FF2B00</color> <!-- Tab-Bar Fokusfarbe -->
+    <color name="white">#FFFFFF</color> <!-- Schriftfarbe -->
 </resources>
