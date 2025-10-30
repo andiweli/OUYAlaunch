@@ -39,3 +39,5 @@ That's all.
 ## Read-to-use APK
 
 You can also just simply download the latest APK release here.
+
+You can find the [Changelog here](https://github.com/andiweli/OUYAlaunch/blob/main/changelog.txt).
