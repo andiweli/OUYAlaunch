@@ -32,3 +32,6 @@ Tab focus in OUYA orange instead of black-transparent
 GridView vertically aligned
 Focus now scales correctly when selected (previously, the image shrank after selection)
 Layout improved
+
+1.4
+Filtering for GameStick Launcher + GameStick
