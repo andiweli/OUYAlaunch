@@ -15,7 +15,7 @@ At the first launch OUYAlaunch scans ALL installed apps for an ``ouya_icon.png``
 
 <img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/c7af91ad-d01c-4ac7-b2c8-02adfbe67a5d" />
 
-As per default ALL scanned apps are initially stored in the tab "Casual".
+As per default ALL scanned apps are initially stored in the 2nd tab "Casual".
 
 ### Now for the available options
 OUYAlaunch has no specific "Settings" or "Options" menu.<br/>
@@ -30,6 +30,25 @@ L1 and R1 navigate your thru the tabs.<br/>
 L2 and R2 both pressed the same time initiate a rescan of all installed apps.
 
 DPAD or Analog sticks navigate thru the app-grid.
+
+### Renaming "Genre-tabs" (since version 1.5)
+
+Customize genre names in the JSON file located at ``sdcard/android/data/com.ast.ouyalaunch``
+
+Define your own 6 genres in the above mentioned file. **The config file will be created the first time the launcher scans your apps!**  
+You just need a texteditor - or edit it on the fly with Total Commander on your OUYA. Just edit the variable names for the 6 genres. Don't edit "Genre1" up to "Genre6" :)
+
+```
+{
+"Favorites": "Favorites",
+"Genre1": "Casual",
+"Genre2": "Action",
+"Genre3": "Racing",
+"Genre4": "Simulation",
+"Genre5": "RPG",
+"Genre6": "Apps"
+}
+```
 
 ## Compile
 
