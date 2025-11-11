@@ -23,6 +23,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+
 
 public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppClickListener {
 
@@ -40,6 +42,12 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // --- Eindeutige App-UUID basierend auf Paketnamen ---
+        String packageName = getPackageName();
+        String appUUID = UUID.nameUUIDFromBytes(packageName.getBytes()).toString();
+        Log.d("OUYAlaunch", "App UUID = " + appUUID);
+
 
         recycler = findViewById(R.id.recycler);
         overlayLoading = findViewById(R.id.overlay_loading);
@@ -86,9 +94,15 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
         for (int i = 0; i < GENRES.size(); i++) {
             final int index = i;
             TextView tv = (TextView) inflater.inflate(android.R.layout.simple_list_item_1, tabContainer, false);
-            tv.setText(GENRES.get(i));
-            tv.setTextColor(getResources().getColor(android.R.color.white));
-            tv.setTextSize(20);
+            tv.setText(GenreNames.getDisplayName(this, GENRES.get(i)));
+
+            // Anwenden des Styles aus styles.xml
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                tv.setTextAppearance(R.style.TabText);
+            } else {
+                tv.setTextAppearance(this, R.style.TabText);
+            }
+
             tv.setPadding(32, 0, 32, 0);
             tv.setSelected(i == currentTab);
             tv.setOnClickListener(new View.OnClickListener() {
@@ -440,6 +454,26 @@ private class ScanTask extends AsyncTask<Void, Void, List<AppEntry>> {
 
         }
         return super.onKeyUp(keyCode, event);
+    }
+
+
+
+    private void refreshTabTitles() {
+        // Refresh tab labels from GenreNames (JSON may have changed)
+        int n = Math.min(tabContainer.getChildCount(), GENRES.size());
+        for (int i = 0; i < n; i++) {
+            View v = tabContainer.getChildAt(i);
+            if (v instanceof TextView) {
+                ((TextView) v).setText(GenreNames.getDisplayName(this, GENRES.get(i)));
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reapply possible user changes to genre_names.json
+        refreshTabTitles();
     }
 
 }

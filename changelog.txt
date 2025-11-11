@@ -34,4 +34,7 @@ Focus now scales correctly when selected (previously, the image shrank after sel
 Layout improved
 
 1.4
-Filtering for GameStick Launcher + GameStick
+Filter for installed GameStick games with bundled launchers (to prevent duplicate ouya_icon.png images from being displayed)
+
+1.5
+Customize genre names in the JSON file located at sdcard/android/data/com.ast.ouyalaunch
