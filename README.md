@@ -11,7 +11,8 @@ The UI was primary designed in Photoshop with some handdrawn button graphics and
 
 ### First launch
 
-At the first launch OUYAlaunch scans ALL installed apps for an ``ouya_icon.png`` file somewhere in ``res/`` and caches them for fast loading.
+> [!NOTE]
+> At the first launch OUYAlaunch scans ALL installed apps for an ``ouya_icon.png`` file somewhere in ``res/`` and caches them for fast loading.
 
 <img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/c7af91ad-d01c-4ac7-b2c8-02adfbe67a5d" />
 
