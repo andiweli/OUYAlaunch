@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
     private AppAdapter adapter;
     private int currentTab = 0; // default "Favorites"
     private DataStore dataStore;
+    private List<AppEntry> allApps = new ArrayList<>();
+    private List<List<AppEntry>> tabLists;
+    private boolean[] tabDirty;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
 
         GridLayoutManager glm = new GridLayoutManager(this, 3);
         recycler.setLayoutManager(glm);
+        recycler.setHasFixedSize(true);
+        recycler.setItemAnimator(null);
+        recycler.setItemViewCacheSize(30);
         recycler.addItemDecoration(new SpacingDecoration(getResources().getDimensionPixelSize(R.dimen.grid_spacing_px)));
         adapter = new AppAdapter(this, new ArrayList<AppEntry>(), this);
         recycler.setAdapter(adapter);
@@ -67,7 +73,9 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
         if (!dataStore.isCacheBuilt()) {
             new ScanTask().execute();
         } else {
-            adapter.setData(filterByCurrentTab(dataStore.load()));
+            allApps = dataStore.load();
+            markAllTabsDirty();
+            adapter.setData(filterByCurrentTab(allApps));
             recycler.post(() -> {
                 // Prüfen, ob überhaupt ein View fokussiert ist
                 if (recycler.getFocusedChild() == null && recycler.getChildCount() > 0) {
@@ -127,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
     private void selectTab(int index) {
         currentTab = index;
         updateTabBackgrounds();
-        adapter.setData(filterByCurrentTab(dataStore.load()));
+        adapter.setData(filterByCurrentTab(allApps));
         recycler.post(() -> {
             // Prüfen, ob überhaupt ein View fokussiert ist
             if (recycler.getFocusedChild() == null && recycler.getChildCount() > 0) {
@@ -137,24 +145,44 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
 
     }
 
-    private List<AppEntry> filterByCurrentTab(List<AppEntry> allApps) {
-        List<AppEntry> filtered = new ArrayList<>();
+    private void initTabCacheIfNeeded() {
+        if (tabLists == null || tabDirty == null || tabDirty.length != GENRES.size()) {
+            tabLists = new ArrayList<>();
+            tabDirty = new boolean[GENRES.size()];
+            for (int i = 0; i < GENRES.size(); i++) {
+                tabLists.add(new ArrayList<>());
+                tabDirty[i] = true;
+            }
+        }
+    }
 
-        // Aktuellen Tab ermitteln
-        String currentGenre = GENRES.get(currentTab);
+    private void markAllTabsDirty() {
+        initTabCacheIfNeeded();
+        for (int i = 0; i < tabDirty.length; i++) {
+            tabDirty[i] = true;
+        }
+    }
 
-        // Filter nach Genre
+    private void rebuildTabList(int tabIndex) {
+        initTabCacheIfNeeded();
+        if (tabIndex < 0 || tabIndex >= GENRES.size()) return;
+
+        String genre = GENRES.get(tabIndex);
+        List<AppEntry> list = tabLists.get(tabIndex);
+        list.clear();
+
+        if (allApps == null) return;
+
         for (AppEntry e : allApps) {
-            if (currentGenre.equals("Favorites")) {
-                if (e.favorite) filtered.add(e);
-            } else if (e.genre.equals(currentGenre)) {
-                filtered.add(e);
+            if ("Favorites".equals(genre)) {
+                if (e.favorite) list.add(e);
+            } else if (genre.equals(e.genre)) {
+                list.add(e);
             }
         }
 
-        // 🔹 Wenn "Favorites" → alphabetisch sortieren
-        if (currentGenre.equals("Favorites")) {
-            java.util.Collections.sort(filtered, new java.util.Comparator<AppEntry>() {
+        if ("Favorites".equals(genre)) {
+            java.util.Collections.sort(list, new java.util.Comparator<AppEntry>() {
                 @Override
                 public int compare(AppEntry a, AppEntry b) {
                     String ta = (a.title != null) ? a.title.toLowerCase() : "";
@@ -164,15 +192,25 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
             });
         }
 
-        return filtered;
+        tabDirty[tabIndex] = false;
     }
+
+List<AppEntry> filterByCurrentTab(List<AppEntry> ignored) {
+        initTabCacheIfNeeded();
+
+        if (tabDirty[currentTab]) {
+            rebuildTabList(currentTab);
+        }
+
+        return tabLists.get(currentTab);
+    }
+
 
 
     // ==============================
     // NEU: Löschen-Funktion
     // ==============================
     private void removeAppFromLauncher(String packageName) {
-        List<AppEntry> allApps = dataStore.load();
         List<AppEntry> updated = new ArrayList<>();
 
         for (AppEntry app : allApps) {
@@ -183,8 +221,10 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
             }
         }
 
-        dataStore.save(updated, true);
-        adapter.setData(filterByCurrentTab(updated));
+        allApps = updated;
+        markAllTabsDirty();
+        dataStore.save(allApps, true);
+        adapter.setData(filterByCurrentTab(allApps));
         recycler.post(() -> {
             // Prüfen, ob überhaupt ein View fokussiert ist
             if (recycler.getFocusedChild() == null && recycler.getChildCount() > 0) {
@@ -270,7 +310,12 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
             @Override
             protected void onPostExecute(List<AppEntry> result) {
                 overlayLoading.setVisibility(View.GONE);
-                adapter.setData(filterByCurrentTab(result));
+                if (result == null) {
+                    result = new ArrayList<>();
+                }
+                allApps = result;
+                markAllTabsDirty();
+                adapter.setData(filterByCurrentTab(allApps));
                 recycler.post(() -> {
                     // Prüfen, ob überhaupt ein View fokussiert ist
                     if (recycler.getFocusedChild() == null && recycler.getChildCount() > 0) {
@@ -316,8 +361,11 @@ private class ScanTask extends AsyncTask<Void, Void, List<AppEntry>> {
 
             dataStore.save(appEntries, true);
 
+            allApps = appEntries;
+            markAllTabsDirty();
+
             if (adapter != null) {
-                adapter.setData(filterByCurrentTab(appEntries));
+                adapter.setData(filterByCurrentTab(allApps));
                 recycler.post(() -> {
                     // Prüfen, ob überhaupt ein View fokussiert ist
                     if (recycler.getFocusedChild() == null && recycler.getChildCount() > 0) {
@@ -353,7 +401,8 @@ private class ScanTask extends AsyncTask<Void, Void, List<AppEntry>> {
         if (idx >= GENRES.size()) idx = 1; // skip favorites
         entry.genre = GENRES.get(idx);
         dataStore.saveOne(entry);
-        adapter.setData(filterByCurrentTab(dataStore.load()));
+        markAllTabsDirty();
+        adapter.setData(filterByCurrentTab(allApps));
         recycler.post(() -> {
             // Prüfen, ob überhaupt ein View fokussiert ist
             if (recycler.getFocusedChild() == null && recycler.getChildCount() > 0) {
@@ -367,7 +416,8 @@ private class ScanTask extends AsyncTask<Void, Void, List<AppEntry>> {
     public void onToggleFavorite(AppEntry entry) {
         entry.favorite = !entry.favorite;
         dataStore.saveOne(entry);
-        if (currentTab == 0) adapter.setData(filterByCurrentTab(dataStore.load()));
+        markAllTabsDirty();
+        if (currentTab == 0) adapter.setData(filterByCurrentTab(allApps));
         recycler.post(() -> {
             // Prüfen, ob überhaupt ein View fokussiert ist
             if (recycler.getFocusedChild() == null && recycler.getChildCount() > 0) {
@@ -379,7 +429,7 @@ private class ScanTask extends AsyncTask<Void, Void, List<AppEntry>> {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
             int code = event.getKeyCode();
             if (code == KeyEvent.KEYCODE_BUTTON_L1) {
                 selectTab(Math.max(0, currentTab - 1));

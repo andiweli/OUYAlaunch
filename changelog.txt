@@ -38,3 +38,6 @@ Filter for installed GameStick games with bundled launchers (to prevent duplicat
 
 1.5
 Customize genre names in the JSON file located at sdcard/android/data/com.ast.ouyalaunch
+
+1.6
+Smoother and faster experience when navigating

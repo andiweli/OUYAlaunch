@@ -48,6 +48,9 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.VH> {
 
     public void setData(List<AppEntry> d) {
         this.data = d != null ? d : new ArrayList<>();
+        if (selectedPosition >= this.data.size()) {
+            selectedPosition = RecyclerView.NO_POSITION;
+        }
         notifyDataSetChanged();
     }
 
@@ -66,19 +69,28 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.VH> {
         AppEntry e = data.get(pos);
         h.title.setText(e.title);
 
-        // App-Icon laden
+        // App-Icon laden (mit LruCache)
         if (e.iconPath != null) {
             File f = new File(e.iconPath);
             if (f.exists()) {
-                Bitmap bm = BitmapFactory.decodeFile(f.getAbsolutePath());
-                if (bm == null) {
-                    bm = BitmapFactory.decodeFile(f.getAbsolutePath());
+                String key = f.getAbsolutePath();
+                Bitmap bm = iconCache.get(key);
+                if (bm == null || bm.isRecycled()) {
+                    bm = BitmapFactory.decodeFile(key);
                     if (bm != null) {
-                        iconCache.put(f.getAbsolutePath(), bm);
+                        iconCache.put(key, bm);
                     }
                 }
-                if (bm != null) h.img.setImageBitmap(bm);
+                if (bm != null) {
+                    h.img.setImageBitmap(bm);
+                } else {
+                    h.img.setImageBitmap(null);
+                }
+            } else {
+                h.img.setImageBitmap(null);
             }
+        } else {
+            h.img.setImageBitmap(null);
         }
 
         // Hover/Fokus-Effekt
@@ -92,7 +104,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.VH> {
                 v.setScaleY(1.05f);
                 // Skalierung animieren
                 v.animate().scaleX(1.1f).scaleY(1.1f).setDuration(120).start();
-                Log.i("AppAdapter", "Fokus auf: " + e.title);
+                // Log-Ausgabe entfernt, um Navigation zu beschleunigen
             } else {
                 v.setBackgroundResource(0);
                 v.animate().scaleX(1.055f).scaleY(1.055f).setDuration(150).start();
