@@ -1,65 +1,162 @@
-# OUYAlaunch
-Lightweight and fast launcher for the OUYA Android micro-gaming-console.
+# OUYAlaunch – Lightweight launcher for the OUYA Android micro-console
+
+> Fast, OUYA-themed Android launcher for the **OUYA** micro-gaming-console with favorites, genre tabs, and automatic icon caching.
+
+[![Latest release](https://img.shields.io/github/v/release/andiweli/OUYAlaunch?label=latest%20APK)](https://github.com/andiweli/OUYAlaunch/releases/latest)
+[![Platform](https://img.shields.io/badge/platform-OUYA%20(Android%204.1.2)-orange)](https://github.com/andiweli/OUYAlaunch)
+[![minSdk](https://img.shields.io/badge/minSdk-16-brightgreen)](https://github.com/andiweli/OUYAlaunch)
+[![Language](https://img.shields.io/badge/language-Java-blue)](https://github.com/andiweli/OUYAlaunch)
+
+**OUYAlaunch** is a custom home-screen replacement for the **OUYA** Android micro-console.  
+It focuses on a clean, OUYA-styled UI, fast navigation with the OUYA controller and a lightweight code base that runs smoothly on the original hardware.
 
 <img width="100%" alt="image" src="https://github.com/user-attachments/assets/ffa3af32-f796-4e6e-acfc-8233935abb7f" />
 
-## Description
+---
 
-**OUYAlaunch** is my attempt in developing an Android Launcher for the OUYA Console<br/>
-It is focused on a clean UI, OUYA colors, fast and lightweight.
-The UI was primary designed in Photoshop with some handdrawn button graphics and logos.
+## ✨ Features
 
-### First launch
+- 🎨 **OUYA-styled, clean UI**
+  - Color scheme and layout designed specifically for the OUYA.
+  - Custom buttons and logos drawn for a cohesive console look.
 
-> [!NOTE]
-> At the first launch OUYAlaunch scans ALL installed apps for an ``ouya_icon.png`` file somewhere in ``res/`` and caches them for fast loading.
+- ⚡ **Fast and lightweight**
+  - Optimized for the OUYA’s Android 4.1.2 base.
+  - Caches app icons for quick grid rendering.
 
-<img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/c7af91ad-d01c-4ac7-b2c8-02adfbe67a5d" />
+- 🕹️ **Controller-only navigation**
+  - Designed to be fully controllable with the OUYA gamepad (no mouse/keyboard required).
+  - All management actions are mapped to the OUYA face buttons and shoulder triggers.
 
-As per default ALL scanned apps are initially stored in the 2nd tab "Casual".
+- 📁 **Automatic app discovery via `ouya_icon.png`**
+  - On first launch, OUYAlaunch scans **all installed apps** for an `ouya_icon.png` somewhere in their `res/` folders.
+  - Icons are cached so the launcher grid stays responsive even with many installed games.
 
-### Now for the available options
-OUYAlaunch has no specific "Settings" or "Options" menu.<br/>
-You control everything with the OUYA-controller-buttons:
+- ⭐ **Favorites and genre tabs**
+  - Apps are organized into multiple tabs (Favorites + 6 genres).
+  - By default, all newly detected apps land in the second tab **“Casual”**, so you can re-organize them at your own pace.
 
-O = launch a selected app<br/>
-U = move the selected app to the next genre<br/>
-Y = delete an app (you have to press the button 2 seconds or longer)<br/>
-A = set an app as "Favorite"
+- 🏷️ **Configurable genre names (JSON-based)**
+  - Rename the six genre tabs via a simple JSON config stored on the OUYA’s internal storage.
+  - No in-app settings screen needed — just edit the JSON file with a text editor or file manager.
 
-L1 and R1 navigate your thru the tabs.<br/>
-L2 and R2 both pressed the same time initiate a rescan of all installed apps.
+---
 
-DPAD or Analog sticks navigate thru the app-grid.
+## 🖼 Screenshot
 
-### Renaming "Genre-tabs" (since version 1.5)
+![OUYAlaunch – favorites & genre tabs](https://github.com/user-attachments/assets/c7af91ad-d01c-4ac7-b2c8-02adfbe67a5d)
 
-Customize genre names in the JSON file located at ``sdcard/android/data/com.ast.ouyalaunch``
+---
 
-Define your own 6 genres in the above mentioned file. **The config file will be created the first time the launcher scans your apps!**  
-You just need a texteditor - or edit it on the fly with Total Commander on your OUYA. Just edit the variable names for the 6 genres. Don't edit "Genre1" up to "Genre6" :)
+## 🚀 How it works (first launch & app scan)
 
-```
-{
-"Favorites": "Favorites",
-"Genre1": "Casual",
-"Genre2": "Action",
-"Genre3": "Racing",
-"Genre4": "Simulation",
-"Genre5": "RPG",
-"Genre6": "Apps"
-}
-```
+On the **first launch**:
 
-## Compile
+1. OUYAlaunch scans all installed apps on the console.
+2. For each package it looks for an `ouya_icon.png` anywhere inside the app’s `res/` folder.
+3. Matching icons are **cached** so the launcher can draw the app grid quickly.
+4. Every found app is initially placed into the **“Casual”** tab (second tab) — you can then move each app into the genre that fits best.
 
-The sourcecode is optimized for Android SDK 16.<br/>
-I used Android Studio 4.0.1 [available here](https://developer.android.com/studio/archive) for better compatibility.
-Load the code, Build sources and compile the APK.
-That's all.
+This makes OUYAlaunch a good drop-in replacement for the stock OUYA launcher while still respecting the familiar OUYA icon convention.
 
-## Read-to-use APK
+---
 
-You can also just simply download the latest APK release here.
+## 🎮 Controller mapping
 
-You can find the [Changelog here](https://github.com/andiweli/OUYAlaunch/blob/main/changelog.txt).
+OUYAlaunch does not have a classic “settings” menu.  
+Instead, you control everything with the OUYA controller buttons:
+
+- **O** – Launch the selected app  
+- **U** – Move the selected app to the **next genre tab**  
+- **Y** – Delete an app (hold for ~2 seconds)  
+- **A** – Mark / unmark an app as **Favorite**
+
+Navigation and global actions:
+
+- **L1 / R1** – Switch between tabs (Favorites + genre tabs)  
+- **L2 + R2 (pressed together)** – Rescan all installed apps (rebuilds the cache)  
+- **D-Pad / Left stick / Right stick** – Move selection in the app grid  
+
+Everything in the launcher can be reached using only the OUYA controller.
+
+---
+
+## 🧩 Renaming genre tabs (JSON config)
+
+Since version **1.5+**, you can rename the six genre tabs using a JSON file created by the launcher on first scan.
+
+The config file is stored at:
+
+    sdcard/android/data/com.ast.ouyalaunch
+
+Inside that folder you will find a JSON file that looks like this:
+
+    {
+      "Favorites": "Favorites",
+      "Genre1": "Casual",
+      "Genre2": "Action",
+      "Genre3": "Racing",
+      "Genre4": "Simulation",
+      "Genre5": "RPG",
+      "Genre6": "Apps"
+    }
+
+- Do **not** rename the keys (`"Genre1"` ... `"Genre6"`).  
+- Only change the **values** on the right side (e.g. `"Racing"`, `"Apps"` etc.).  
+- You can edit the file directly on the OUYA with a file manager such as *Total Commander* or on a PC and then copy it back.
+
+The launcher will read these values and update the tab titles the next time it runs.
+
+---
+
+## 📦 Installation (ready-to-use APK)
+
+If you just want to use OUYAlaunch on your OUYA without touching the source code:
+
+1. Go to the **Releases** section:  
+   👉 **[Download the latest OUYAlaunch APK](https://github.com/andiweli/OUYAlaunch/releases/latest)**
+2. Copy the APK to your OUYA (via USB drive, network share, or browser).  
+3. Install the APK on your OUYA.  
+4. When you press the **OUYA / Home** button, select OUYAlaunch as your launcher (and mark it as default if you want it to fully replace the stock launcher).
+
+You can check the detailed version history in the included `changelog.txt` file or directly on GitHub.
+
+---
+
+## 🛠 Build from source
+
+If you want to modify OUYAlaunch or build it yourself:
+
+- **Minimum Android version:** SDK 16 (Android 4.1.x – matching the OUYA firmware)  
+- **IDE:** Android Studio **4.0.1** or newer  
+- **Language:** Java  
+
+### Steps
+
+1. Clone the repository:
+
+       git clone https://github.com/andiweli/OUYAlaunch.git
+       cd OUYAlaunch
+
+2. Open the project in **Android Studio 4.0.1+**.  
+3. Let Gradle sync and resolve dependencies.  
+4. Build the APK (menu: Build → Make Project or Build Bundle(s) / APK(s)).  
+5. Deploy the resulting APK to your OUYA.
+
+The project is optimized for SDK 16 so it stays compatible with the original OUYA system software.
+
+---
+
+## ℹ️ About
+
+**OUYAlaunch**  
+Lightweight and fast launcher for the **OUYA Android micro-gaming-console**.  
+Created as a side project to give the OUYA a clean, console-style launcher focused on games and controller-only navigation.
+
+If you find OUYAlaunch useful, consider giving the repo a ⭐ on GitHub so more OUYA owners can discover it.
+
+---
+
+## 🔎 Keywords / topics
+
+_ouya • android • launcher • home screen • couch gaming • micro-console • favorites • genres • ouya_icon • custom launcher_
