@@ -6,8 +6,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import android.os.Handler;
+
 
 
 public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppClickListener {
@@ -33,6 +41,26 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
     private RecyclerView recycler;
     private View overlayLoading;
     private LinearLayout tabContainer;
+
+    private ImageView imgNetworkStatus;
+    private final int[] WIFI_ICONS = {
+            R.drawable.ic_wifi_0,
+            R.drawable.ic_wifi_1,
+            R.drawable.ic_wifi_2,
+            R.drawable.ic_wifi_3,
+            R.drawable.ic_wifi_4
+    };
+
+    private static final long NETWORK_UPDATE_INTERVAL_MS = 15_000L;
+    private final Handler networkHandler = new Handler();
+    private final Runnable networkUpdateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            updateNetworkIcon();
+            // nächsten Lauf in 15 Sekunden planen
+            networkHandler.postDelayed(this, NETWORK_UPDATE_INTERVAL_MS);
+        }
+    };
 
     private AppAdapter adapter;
     private int currentTab = 0; // default "Favorites"
@@ -55,8 +83,13 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
         recycler = findViewById(R.id.recycler);
         overlayLoading = findViewById(R.id.overlay_loading);
         tabContainer = findViewById(R.id.tab_container);
+        imgNetworkStatus = findViewById(R.id.imgNetworkStatus);
+
+        applyNetworkIconTint();
 
         dataStore = new DataStore(this);
+
+        updateNetworkIcon();
 
         GridLayoutManager glm = new GridLayoutManager(this, 3);
         recycler.setLayoutManager(glm);
@@ -519,11 +552,79 @@ private class ScanTask extends AsyncTask<Void, Void, List<AppEntry>> {
         }
     }
 
+    private boolean isWifiConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) return false;
+        NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return wifiInfo != null && wifiInfo.isConnected();
+    }
+
+    private boolean isLanConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) return false;
+        NetworkInfo lanInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
+        return lanInfo != null && lanInfo.isConnected();
+    }
+
+    private int getWifiLevel0to4() {
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (wifiManager == null) return 0;
+
+        WifiInfo info = wifiManager.getConnectionInfo();
+        if (info == null) return 0;
+
+        int rssi = info.getRssi();
+        int level = WifiManager.calculateSignalLevel(rssi, WIFI_ICONS.length);
+        if (level < 0) level = 0;
+        if (level >= WIFI_ICONS.length) level = WIFI_ICONS.length - 1;
+        return level;
+    }
+
+
+    private void applyNetworkIconTint() {
+        if (imgNetworkStatus != null) {
+            int color = Color.parseColor("#D8D9DC");
+            imgNetworkStatus.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        }
+    }
+
+
+    private void updateNetworkIcon() {
+        if (imgNetworkStatus == null) {
+            imgNetworkStatus = findViewById(R.id.imgNetworkStatus);
+        }
+        if (imgNetworkStatus == null) {
+            return;
+        }
+
+        if (isLanConnected()) {
+            imgNetworkStatus.setImageResource(R.drawable.ic_lan);
+        } else if (isWifiConnected()) {
+            int level = getWifiLevel0to4();
+            imgNetworkStatus.setImageResource(WIFI_ICONS[level]);
+        } else {
+            imgNetworkStatus.setImageResource(R.drawable.ic_offline);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Timer stoppen, solange der Launcher nicht im Vordergrund ist
+        networkHandler.removeCallbacks(networkUpdateRunnable);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         // Reapply possible user changes to genre_names.json
         refreshTabTitles();
-    }
 
+        // Sofort einmal aktualisieren
+        updateNetworkIcon();
+
+        // Sicherheitshalber alte Callbacks entfernen und dann neu starten
+        networkHandler.removeCallbacks(networkUpdateRunnable);
+        networkHandler.postDelayed(networkUpdateRunnable, NETWORK_UPDATE_INTERVAL_MS);
+    }
 }
