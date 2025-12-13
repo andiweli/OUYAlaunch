@@ -3,6 +3,13 @@
     <dimen name="title_bar_height_px">50px</dimen> <!-- Höhe Tabs -->
     <dimen name="tab_right_padding">40dp</dimen>
     <dimen name="grid_spacing_px">58px</dimen> <!-- vertikaler Abstand im Grid -->
+    <!--
+      Side margins/padding for the app grid.
+      Use PX (not DP) on purpose so the 1080p layout stays consistent across devices
+      with different screen densities (OUYA is mdpi; many 1080p Android devices are xhdpi).
+    -->
+    <dimen name="grid_side_margin_px">120px</dimen>
+    <dimen name="grid_side_padding_px">120px</dimen>
     <dimen name="tile_width_px">440px</dimen> <!-- Kachelbreite -->
     <dimen name="tile_height_px">248px</dimen> <!-- Kachelhöhe -->
 </resources>

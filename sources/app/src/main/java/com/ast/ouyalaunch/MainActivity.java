@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MarginLayoutParamsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.ViewGroup;
@@ -100,6 +101,17 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
         adapter = new AppAdapter(this, new ArrayList<AppEntry>(), this);
         recycler.setAdapter(adapter);
 
+        // Fix für Geräte mit gleicher Auflösung aber anderer DPI:
+        // In activity_main.xml werden dp-Margins/Paddings verwendet (OUYA-Layout passt damit).
+        // Auf manchen 1080p-Geräten werden diese dp-Werte zu groß -> Spaltenbreite < feste Tile-Breite -> Überlappung.
+        // Wir passen nur dann dynamisch an, wenn die aktuelle Spaltenbreite die Tile-Breite nicht aufnehmen kann.
+        recycler.post(new Runnable() {
+            @Override
+            public void run() {
+                ensureGridFitsFixedTiles(glm);
+            }
+        });
+
         setupTabs();
 
         // first run?
@@ -127,6 +139,71 @@ public class MainActivity extends AppCompatActivity implements AppAdapter.OnAppC
                 .setStartDelay(100)            // kleine Verzögerung für flüssigen Start
                 .start();
 
+    }
+
+    /**
+     * Stellt sicher, dass das Grid mit festen Tile-Pixelmaßen (item_app.xml) nicht überlappt,
+     * wenn dp-basierte Side-Margins/Paddings auf High-DPI-Geräten zu groß werden.
+     *
+     * OUYA soll unverändert bleiben: Wir greifen nur ein, wenn die berechnete Spaltenbreite
+     * kleiner als die feste Tile-Breite ist.
+     */
+    private void ensureGridFitsFixedTiles(GridLayoutManager glm) {
+        if (recycler == null || glm == null) return;
+
+        final int tileW = getResources().getDimensionPixelSize(R.dimen.tile_width_px);
+        final int spacing = getResources().getDimensionPixelSize(R.dimen.grid_spacing_px);
+        final int screenW = getResources().getDisplayMetrics().widthPixels;
+
+        int rvWidth = recycler.getWidth();
+        if (rvWidth <= 0) rvWidth = screenW;
+
+        int paddingLeft = recycler.getPaddingLeft();
+        int paddingRight = recycler.getPaddingRight();
+        int contentW = Math.max(0, rvWidth - paddingLeft - paddingRight);
+
+        int span = glm.getSpanCount();
+        if (span <= 0) span = 3;
+
+        // Wenn die Spalte die feste Kachelbreite (plus etwas Luft für Spacing) nicht aufnehmen kann,
+        // schalten wir auf pixelbasierte Zentrierung um und reduzieren ggf. die Spaltenanzahl.
+        int colW = (span > 0) ? (contentW / span) : contentW;
+        if (colW >= tileW) {
+            return; // alles gut, OUYA/Standard-Look bleibt unverändert
+        }
+
+        // Horizontal-Margins entfernen, damit RecyclerView die volle Breite nutzen kann.
+        ViewGroup.LayoutParams lp = recycler.getLayoutParams();
+        if (lp instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) lp;
+            mlp.leftMargin = 0;
+            mlp.rightMargin = 0;
+            // XML nutzt layout_marginStart/End -> auf API17+ auch Start/End explizit nullen
+            MarginLayoutParamsCompat.setMarginStart(mlp, 0);
+            MarginLayoutParamsCompat.setMarginEnd(mlp, 0);
+            recycler.setLayoutParams(mlp);
+        }
+
+        // Spaltenanzahl anhand der echten Bildschirmbreite bestimmen.
+        // (recycler.getWidth() kann hier noch die alten dp-Margins berücksichtigen -> führt sonst zu 2 Spalten + Linksversatz)
+        int desiredSpan = 3;
+        while (desiredSpan > 1) {
+            int needed = desiredSpan * (tileW + spacing);
+            if (needed <= screenW) break;
+            desiredSpan--;
+        }
+        if (desiredSpan != glm.getSpanCount()) glm.setSpanCount(desiredSpan);
+
+        int needed = desiredSpan * (tileW + spacing);
+        int leftover = screenW - needed;
+        int sidePadPx = Math.max(0, leftover / 2);
+
+        // Top/Bottom Padding beibehalten (z.B. 6dp oben).
+        int top = recycler.getPaddingTop();
+        int bottom = recycler.getPaddingBottom();
+        recycler.setPadding(sidePadPx, top, sidePadPx, bottom);
+
+        recycler.requestLayout();
     }
 
     private void setupTabs() {
